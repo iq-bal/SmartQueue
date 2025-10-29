@@ -46,7 +46,7 @@ SmartQueue/
 Make sure you are in the OMNeT++ environment shell:
 ```bash
 # Start opp_env shell if not already in it
-opp_env
+opp_env shell
 ```
 
 ### 2. Build the Project
