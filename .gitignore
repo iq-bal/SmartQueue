@@ -5,3 +5,9 @@
 /results.csv
 /results/*
 /Abstract.txt
+/reports.aux
+/reports.log
+/reports.out
+/reports.toc
+.DS_Store
+**/.DS_Store

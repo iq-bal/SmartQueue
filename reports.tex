@@ -1,20 +1,68 @@
-\documentclass[11pt]{article}
+\documentclass[12pt]{article}
 \usepackage[a4paper,margin=1in]{geometry}
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{url}
 \usepackage{times}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+% Hide link colors in TOC and references
+\hypersetup{hidelinks}
 
-\title{QoS-AR: Quality-of-Service Adaptive Router}
-\author{SmartQueue Project}
-\date{\\OMNeT++ 6.2.0, macOS}
+% Report metadata (cover page details)
+\newcommand{\CourseTitle}{Computer Networks Laboratory}
+\newcommand{\CourseCode}{4106}
+\newcommand{\SubmittedByName}{Iqbal Mahamud Moon}
+\newcommand{\SubmittedByID}{2007093}
+\newcommand{\SubmittedByAffiliation}{CSE, KUET}
+\newcommand{\SubmittedToA}{Md Sakhawat Hossain}
+\newcommand{\SubmittedToATitle}{Lecturer, Dept of Computer Science and Engineering}
+\newcommand{\SubmittedToB}{Farhan Sadaf}
+\newcommand{\SubmittedToBTitle}{Lecturer, Dept of Computer Science and Engineering}
+
+% Code listing style
+\lstset{basicstyle=\ttfamily\small,frame=single,backgroundcolor=\color{gray!10},breaklines=true}
 
 \begin{document}
-\maketitle
+
+% Cover Page (enhanced)
+\begin{titlepage}
+    \centering
+    {\Huge \textbf{QoS-AR: Quality-of-Service Adaptive Router}}\par
+    \vspace{0.5em}
+    {\Large SmartQueue Project}\par
+    \vspace{1.5em}
+    \rule{\textwidth}{1pt}\\[0.8em]
+    {\large \textbf{Course Title:} \CourseTitle}\\[0.25em]
+    {\large \textbf{Course Code:} \CourseCode}\\[0.8em]
+    \rule{\textwidth}{1pt}
+    \vspace{2em}
+    \begin{tabular}{p{0.47\textwidth} p{0.47\textwidth}}
+        \multicolumn{1}{c}{\textbf{Submitted By}} & \multicolumn{1}{c}{\textbf{Submitted To}} \\
+        \SubmittedByName & \SubmittedToA \\
+        \SubmittedByID & \SubmittedToATitle \\
+        \SubmittedByAffiliation & \\
+        & \SubmittedToB \\
+        & \SubmittedToBTitle \\
+    \end{tabular}
+    \vfill
+    {\large OMNeT++ 6.2.0, macOS}
+\end{titlepage}
+
+% Table of Contents
+\tableofcontents
+\clearpage
 
 \begin{abstract}
-Quality-of-service (QoS) guarantees for heterogeneous traffic are challenging under variable and bursty loads. We present QoS-AR, a lightweight, QoS-aware software router for OMNeT++ that prioritizes delay-sensitive flows while adapting to congestion. QoS-AR classifies traffic into voice, video, and data, monitors queue occupancy, and switches scheduling modes when thresholds are crossed. Under congestion, the router protects real-time traffic by elevating priority and selectively dropping low-priority packets. Evaluation across Light, Mixed, Heavy, and Congested scenarios demonstrates reduced delay for voice and video and controlled queue growth. Packet loss is concentrated in the lowest priority class, and throughput for voice/video remains stable. QoS-AR offers a practical balance between latency protection and fairness, delivering consistent QoS without heavyweight dependencies.
+Quality-of-service (QoS) guarantees for heterogeneous traffic are challenging under variable and bursty loads. We present QoS-AR, a lightweight, QoS-aware software router for OMNeT++ that prioritizes delay-sensitive flows while adapting to congestion. QoS-AR classifies traffic into voice, video, and data, monitors queue occupancy, and switches scheduling modes when thresholds are crossed. Under congestion, the router protects real-time traffic by elevating priority and selectively dropping low-priority packets. Evaluation across Light, Mixed, Heavy, and Congested scenarios demonstrates reduced delay for voice and video and controlled queue growth. In runs with sufficient overload, packet loss is concentrated in the lowest priority class and throughput for voice/video remains stable; when load is below service capacity, drops may be negligible. QoS-AR offers a practical balance between latency protection and fairness, delivering consistent QoS without heavyweight dependencies.
 \end{abstract}
 
 \section{Introduction}
@@ -22,73 +70,185 @@ Interactive applications increasingly rely on tight latency bounds, yet traffic 
 
 The goals are to maintain low end-to-end delay for real-time flows, prevent uncontrolled queue growth under load, and achieve robust behavior across scenarios without requiring external frameworks. We describe the system design, implementation, simulation setup, and analysis of performance across representative traffic conditions.
 
-\section{Background and Motivation}
-Latency-sensitive traffic such as voice and video deteriorates rapidly when queuing delay spikes. Simple queueing disciplines cannot differentiate classes, while pure strict-priority scheduling risks starvation. Adaptive strategies are required to detect congestion and elevate priority for real-time flows temporarily, while bounding losses to less critical traffic. QoS-AR uses a hybrid approach: normal mode operates with balanced service, while congested mode enforces priority for real-time and institutes selective dropping for low-priority packets to reduce queuing delay.
+\section{Problem Statement}
+Traditional routers treat packets uniformly, which leads to elevated delay and loss when queues build during congestion. Delay-sensitive traffic (voice/video) degrades rapidly under these conditions. The problem is to design and evaluate a router that dynamically adapts to network load, prioritizes real-time traffic, and bounds queue growth while maintaining acceptable throughput for elastic data flows.
 
-\section{Design}
-QoS-AR's architecture comprises three main functional components: a \emph{TrafficGenerator} that produces voice, video, and data packets with class tags; an \emph{AdaptiveRouter} that monitors queue occupancy and switches scheduling modes; and a \emph{Server} sink that measures end-to-end performance.
+\section{Objectives}
+The project pursues the following measurable objectives: (i) simulate adaptive router behavior in OMNeT++ Core (no INET); (ii) implement priority-based scheduling across high/medium/low classes; (iii) detect congestion using occupancy thresholds and switch modes; (iv) measure delay, throughput, and packet loss under varied loads; and (v) provide reproducible plots alongside a polished LaTeX report.
 
-The router maintains a \emph{PriorityQueue} that separates packets into high, medium, and low priority queues. The scheduling mode depends on the queue occupancy relative to configured thresholds. When occupancy exceeds a higher threshold, the router enters a congested mode prioritizing real-time traffic. When occupancy falls below a lower threshold, the router returns to normal mode. In congested mode, the router may drop low-priority packets when necessary to prevent runaway delay.
+\section{Background Study and Related Work}
+Queue management has evolved from DropTail to active schemes such as RED and CoDel, and scheduling disciplines like WFQ and strict priority. QoS frameworks include IntServ (per-flow guarantees) and DiffServ (class-based treatment). QoS-AR applies core ideas from DiffServ-style class differentiation and priority queuing in a lightweight OMNeT++ implementation, deliberately avoiding external frameworks to keep the design transparent and educational.
+
+\section{System Design and Methodology}
+\subsection{Network Topology}
+The simulated topology is minimal and reproducible:
+\begin{verbatim}
+Client[0] (Voice)
+Client[1] (Video)
+Client[2] (Data)
+     ↓
+   Adaptive Router
+     ↓
+     Server
+\end{verbatim}
+
+\subsection{Modules}
+\begin{table}[h]
+  \centering
+  \caption{Module roles in QoS-AR}
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    \textbf{Module} & \textbf{Role} \\
+    \midrule
+    TrafficGenerator & Generates packets with class tags and configured rates. \\
+    AdaptiveRouter   & Detects congestion and adjusts scheduling mode. \\
+    PriorityQueue    & Manages high/medium/low queues with head-of-line discipline. \\
+    Server           & Records per-packet delay, throughput, and counts. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \subsection{Adaptive Logic}
-Congestion detection relies on queue occupancy compared to configured capacity. When occupancy exceeds a high threshold (e.g., 70\% of capacity), the router switches to a congested mode; when occupancy falls below a low threshold (e.g., 50\%), it returns to normal mode. In congested mode, strict or biased priority scheduling favors real-time traffic, and the router selectively drops low-priority packets to keep latency bounded.
+Congestion detection relies on queue occupancy compared with configured capacity. When occupancy exceeds a high threshold (e.g., 70\%), the router enters a congested mode; when occupancy falls below a low threshold (e.g., 50\%), it returns to normal mode. In congested mode, strict or biased priority scheduling favors real-time traffic, and low-priority packets may be dropped to bound latency.
+
+\begin{lstlisting}[language=C++,caption={Congestion thresholds and selective drop policy}]
+if (queueLength > 0.7 * capacity) {
+    mode = CONGESTED;
+}
+else if (queueLength < 0.5 * capacity) {
+    mode = NORMAL;
+}
+
+if (mode == CONGESTED && pkt.priority == LOW) {
+    drop(pkt); // protect latency for real-time traffic
+}
+\end{lstlisting}
+
+\subsection{Parameters}
+\begin{table}[h]
+  \centering
+  \caption{Key parameters}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
+    \midrule
+    Queue Capacity       & $Q$      & 200 (General), 50 (Congestion scenario) \\
+    Congestion Threshold & $T_{high}$ & 70\% of $Q$ \\
+    Recovery Threshold   & $T_{low}$  & 50\% of $Q$ \\
+    Simulation Time      & $T$      & 60s \\
+    Router service delay & $\Delta$ & 1ms per packet (default) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \section{Implementation}
-QoS-AR is implemented in OMNeT++ without external frameworks. The \texttt{TrafficGenerator} tags packets with class attributes and rates configured in \texttt{omnetpp.ini}. The \texttt{AdaptiveRouter} monitors queue size, updates scheduling mode, and enqueues packets into the appropriate priority queue. The \texttt{PriorityQueue} supports push/pop operations with head-of-line discipline per class. The \texttt{Server} records metrics including average delay, per-class throughput, and packet counts.
+QoS-AR is implemented in OMNeT++ Core without INET. The \texttt{TrafficGenerator} tags packets with class attributes and rates configured in \texttt{omnetpp.ini}. The \texttt{AdaptiveRouter} monitors queue size, updates scheduling mode, and enqueues packets into a \texttt{PriorityQueue} that separates traffic by class. The \texttt{Server} records metrics including delay and per-class throughput.
 
-The simulation is built as an executable (\texttt{./SmartQueue}), ensuring that all components are statically linked. Results are exported using \texttt{opp\_scavetool} into CSV for reproducible analysis and plotting.
+The simulation builds a single executable (\texttt{./SmartQueue}). Results are exported using \texttt{opp\_scavetool} into CSV for reproducible plotting via \texttt{scripts/plot\_metrics.py}.
 
 \section{Simulation Environment}
-Experiments use OMNeT++ 6.2.0 on macOS in command-line mode (Cmdenv). Scenarios include Light, Mixed, Heavy, and Congested traffic patterns, configured in \texttt{omnetpp.ini}. The topology consists of a generator, an adaptive router, and a sink server node. Queue capacity and congestion thresholds are set as fractions of the configured capacity to reflect practical operating regions.
+\begin{table}[h]
+  \centering
+  \caption{Environment and scenarios}
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    \textbf{Component} & \textbf{Specification} \\
+    \midrule
+    Simulator & OMNeT++ 6.2.0 (Cmdenv/Qtenv) \\
+    OS        & macOS \\
+    Language  & C++ (no INET) \\
+    Scenarios & Light, Mixed, Heavy, Congestion \\
+    Config    & See \texttt{omnetpp.ini}: thresholds and send intervals \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-Simulations are executed via \texttt{./SmartQueue -u Cmdenv -f omnetpp.ini -c <Scenario>}. Results are exported using \texttt{opp\_scavetool} in row-oriented and scalar formats. Figures are generated by a Python script from the exported CSVs.
+\noindent\textbf{Reproducibility.} Example commands:
+\begin{verbatim}
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Congestion
+opp_scavetool x results/* -o results/scalars.csv -F CSV-R
+python3 scripts/plot_metrics.py
+\end{verbatim}
 
 \section{Results and Analysis}
-We evaluate four metrics: router queue occupancy over time, end-to-end delay by traffic class, packet loss, and throughput by traffic class. The figures in this section are generated from the exported results and illustrate trends across scenarios.
+We evaluate router queue occupancy over time, end-to-end delay by class, packet loss, and throughput by class. Figures reference section-based numbering (Figure 7.x).
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\linewidth]{figures/queue_length_timeseries.png}
-  \caption{Router queue length over time across scenarios.}
+  \caption{Queue length over time across scenarios}
 \end{figure}
 
-The queue length rises with offered load, peaking during Heavy and Congested scenarios. The adaptive logic constrains sustained queue growth by shifting to the congested mode when thresholds are exceeded.
+Queue length rises with offered load, peaking in Heavy and Congestion scenarios. Congestion-mode switching limits sustained growth once thresholds are exceeded.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\linewidth]{figures/delay_by_type.png}
-  \caption{Average end-to-end delay by traffic class (voice, video, data).}
+  \caption{Average end-to-end delay by traffic class}
 \end{figure}
 
-Average delays show that voice traffic consistently achieves the lowest latency under all conditions, with video also protected relative to data during periods of congestion. The results confirm that prioritization in congested mode effectively bounds delay-sensitive flows.
+Voice traffic consistently achieves the lowest latency, with video protected relative to data during congestion periods.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\linewidth]{figures/packet_loss.png}
-  \caption{Packet loss across scenarios (total and low-priority).}
+  \caption{Packet loss across scenarios (total and low-priority)}
 \end{figure}
 
-Packet loss occurs primarily in the low-priority class during congestion, aligning with the design goal of protecting real-time traffic by trading off low-priority retention when necessary.
+In current runs, if offered load is below service capacity, drops are negligible; otherwise, losses concentrate in the lowest-priority class as intended. The plotting script annotates the chart when all loss values are zero.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\linewidth]{figures/throughput_by_type.png}
-  \caption{Throughput by traffic class across scenarios.}
+  \caption{Throughput by traffic class across scenarios}
 \end{figure}
 
 Throughput for voice and video remains relatively stable, indicating that priority service maintains delivery rates for real-time classes. Data throughput varies more under higher load due to selective dropping in congested mode.
 
+\subsection{Observations}
+Key observations include: mode switching aligns with threshold crossings, limiting sustained queue growth; latency protection is strongest for voice while video benefits during peaks; loss behavior depends on offered load relative to the service rate; and results are reproducible via exported scalars and the plotting script.
+
 \section{Discussion}
 QoS-AR's adaptive scheduling achieves a practical balance between QoS and resource efficiency. Elevating priority for real-time traffic reduces delay but may increase loss for data during peaks. This trade-off is intentional: latency requirements for voice and video are stricter, while data flows often tolerate retransmissions. The system avoids starvation by returning to normal mode when congestion subsides.
 
-Parameter tuning—specifically, queue capacity and congestion thresholds—affects responsiveness. Higher thresholds delay mode switches but risk larger queues; lower thresholds may switch too often. Careful calibration based on expected workload is recommended.
+Parameter tuning—specifically, queue capacity, service rate, and thresholds—affects responsiveness. Higher thresholds delay switches but risk larger queues; lower thresholds may switch too often. Careful calibration based on workload is recommended.
+
+\section{Limitations and Threats to Validity}
+This study uses a single-router topology, which may not capture multi-hop interactions. The synthetic traffic models approximate real behavior but do not replicate production traces. Service rate versus offered load must be tuned to elicit packet drops; otherwise packet-loss conclusions can be trivial. Results are sensitive to simulation duration and burst configuration, which should be considered when generalizing findings.
 
 \section{Conclusion}
 We presented QoS-AR, a minimal, adaptive router that enforces QoS under varied load without heavy dependencies. The design combines priority queuing with congestion-aware mode switching to protect delay-sensitive traffic. Experiments show reduced delays for real-time classes, controlled queue growth, and concentrated packet loss in low-priority traffic under overload. QoS-AR provides a practical approach to QoS enforcement for small-scale deployments and educational settings.
+
+\section{Future Work}
+Future directions include multi-router topologies, ML-based congestion prediction, comparison with RED/CoDel, and real-time visualization of router states. Extending the adaptive logic with dynamic thresholding or control-theoretic tuning may further improve responsiveness.
 
 \section*{References}
 OMNeT++ User Manual, Version 6.x. Available at \url{https://omnetpp.org/}.
 
 RFC 4594: Configuration Guidelines for DiffServ Service Classes. IETF, 2006.
+
+\appendix
+\section{Selected Configuration and Commands}
+\noindent Example scenario execution and export:
+\begin{verbatim}
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Light
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Mixed
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Heavy
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Congestion
+opp_scavetool x results/* -o results/scalars.csv -F CSV-R
+python3 scripts/plot_metrics.py
+\end{verbatim}
+
+\section{Code Snippet: Router Drop Counters}
+\begin{lstlisting}[language=C++,caption={Illustrative drop counter update}]
+// in AdaptiveRouter::handleIncomingPacket
+if (priorityQueue.isFull()) {
+    packetsDropped++;
+    if (pkt.priority == LOW) lowPriorityDropped++;
+    delete pkt; // drop
+    return;
+}
+priorityQueue.enqueue(pkt);
+\end{lstlisting}
 
 \end{document}
