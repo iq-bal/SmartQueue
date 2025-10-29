@@ -1,0 +1,9 @@
+OMNeT++ Discrete Event Simulation  (C) 1992-2025 Andras Varga, OpenSim Ltd.
+Version: 6.2.0, build: 250714-83e173e93a, edition: Academic Public License -- NOT FOR COMMERCIAL USE
+See the license for distribution terms and warranty disclaimer
+
+Setting up Cmdenv...
+
+Loading NED files from .: <!> Error: Could not load NED sources from '.': Declared package '' does not match expected package 'ned' in file /Users/iqbalmahamud/project/SmartQueue/ned/NetworkTopology.ned
+
+End.

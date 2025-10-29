@@ -1,0 +1,3 @@
+# Ignore specific files in the root directory
+/prompt.md
+/terminal_output.txt
