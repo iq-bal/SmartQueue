@@ -125,11 +125,21 @@ After running simulations, results are stored in the `results/` directory:
 
 ### Export Results to CSV
 ```bash
-# Export scalar results
-scavetool export -f CSV -o results.csv results/*.sca
+# Export scalar results (CSV-S format, scalars)
+opp_scavetool export -F CSV-S -T s -o results/scalars.csv results/*.sca
 
-# Export vector results  
-scavetool export -f CSV -o vectors.csv results/*.vec
+# Export vector results (CSV-S format, vectors)
+opp_scavetool export -F CSV-S -T v -o results/vectors.csv results/*.vec
+
+# Optional: filter examples
+# Only router queue length vector
+opp_scavetool export -F CSV-S -T v -o results/queueLength.csv -f 'name(queueLength)' results/*.vec
+# Only per-type average delays from server (scalars)
+opp_scavetool export -F CSV-S -T s -o results/delays_avg.csv -f 'name(~*AverageDelay) && module=~**.server' results/*.sca
+
+# If 'opp_scavetool' is unavailable, use the full path or add to PATH:
+# $OMNETPP_ROOT/bin/scavetool export -F CSV-S -T s -o results/scalars.csv results/*.sca
+# export PATH="$OMNETPP_ROOT/bin:$PATH"
 ```
 
 ## Key Metrics
