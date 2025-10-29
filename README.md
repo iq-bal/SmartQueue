@@ -72,13 +72,7 @@ make
 
 #### Run Individual Scenarios
 ```bash
-# Using OMNeT++ runner
-opp_run -u Cmdenv -f omnetpp.ini -c Light
-opp_run -u Cmdenv -f omnetpp.ini -c Heavy
-opp_run -u Cmdenv -f omnetpp.ini -c Mixed
-opp_run -u Cmdenv -f omnetpp.ini -c Congestion
-
-# Or using the built binary
+# using the built binary
 ./SmartQueue -u Cmdenv -f omnetpp.ini -c Light
 ./SmartQueue -u Cmdenv -f omnetpp.ini -c Heavy
 ./SmartQueue -u Cmdenv -f omnetpp.ini -c Mixed
