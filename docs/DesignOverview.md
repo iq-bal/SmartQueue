@@ -262,3 +262,23 @@ The `omnetpp.ini` file defines multiple scenarios:
 - Hardware-in-the-loop simulation capabilities
 
 This design provides a solid foundation for studying adaptive routing behaviors while maintaining simplicity and extensibility for future research directions.
+
+## Running the Simulation
+
+Use the built executable to run scenarios, matching the project’s build setup:
+
+```bash
+# Run an individual scenario in console mode
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Light
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Heavy
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Mixed
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Congestion
+
+# Run with GUI (if available)
+./SmartQueue -u Qtenv -f omnetpp.ini
+
+# Run all predefined test scenarios
+./run_tests.sh
+```
+
+Note on `opp_run`: It requires loading your simulation code as a shared library. This project builds a monolithic executable, so prefer invoking `./SmartQueue`. If you choose to use `opp_run`, ensure a shared library is built and loaded via `-l <path-to-lib>` or `load-libs` in `omnetpp.ini`.

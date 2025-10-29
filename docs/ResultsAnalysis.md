@@ -202,8 +202,8 @@ Adaptation Frequency: Light → Heavy → Congestion
 
 #### Queue Length Trends
 ```bash
-# Extract queue length data
-scavetool export -f CSV -o queue_data.csv results/*.vec -F "name(queueLength)"
+# Extract queue length vector data
+opp_scavetool export -F CSV-S -T v -o results/queue_data.csv -f 'name(queueLength)' results/*.vec
 
 # Analysis points:
 - Identify congestion periods
@@ -213,8 +213,8 @@ scavetool export -f CSV -o queue_data.csv results/*.vec -F "name(queueLength)"
 
 #### Delay Distribution Analysis
 ```bash
-# Extract delay measurements
-scavetool export -f CSV -o delay_data.csv results/*.vec -F "name(*Delay*)"
+# Extract per-packet delay vectors
+opp_scavetool export -F CSV-S -T v -o results/delay_data.csv -f 'name(delay) || name(~*Delay*)' results/*.vec
 
 # Statistical measures:
 - Mean, median, 95th percentile delays
@@ -287,14 +287,14 @@ Congestion Handling = (Packets Delivered During Congestion) / (Total Packets Gen
 #!/bin/bash
 # Process all simulation results
 
-# Export scalar data
-scavetool export -f CSV -o scalars.csv results/*.sca
+# Export scalar data (CSV-S format, scalars)
+opp_scavetool export -F CSV-S -T s -o results/scalars.csv results/*.sca
 
-# Export vector data  
-scavetool export -f CSV -o vectors.csv results/*.vec
+# Export vector data (CSV-S format, vectors)
+opp_scavetool export -F CSV-S -T v -o results/vectors.csv results/*.vec
 
 # Generate summary statistics
-python analyze_results.py scalars.csv vectors.csv
+python analyze_results.py results/scalars.csv results/vectors.csv
 ```
 
 ### Key Metrics Extraction
