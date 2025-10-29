@@ -81,7 +81,7 @@ make
 
 #### Run with GUI (if available)
 ```bash
-opp_run -u Qtenv -f omnetpp.ini
+./SmartQueue -u Qtenv -f omnetpp.ini
 ```
 
 ## Traffic Scenarios
