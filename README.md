@@ -127,7 +127,7 @@ opp_scavetool export -F CSV-S -T v -o results/vectors.csv results/*.vec
 
 # Optional: filter examples
 # Only router queue length vector
-opp_scavetool export -F CSV-S -T v -o results/queueLength.csv -f "name=~queueLength" results/*.vec
+opp_scavetool export -F CSV-R -T v -o results/queue_length_vectors.csv -f "name=~queueLength" results/*.vec > results/scavetool_log.txt 2>&1
 
 # Only per-type average delays from server (scalars)
 opp_scavetool export -F CSV-S -T s -o results/delays_avg.csv -f "name=~averageDelay AND module=~.*server" results/*.sca
