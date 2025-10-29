@@ -14,3 +14,5 @@
 /CLAUDE.md
 /compare_priorities.py
 /test_priority_differences.sh
+/test_equal_priorities.sh
+/reports.lof
