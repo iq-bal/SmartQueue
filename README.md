@@ -169,7 +169,7 @@ The simulation collects various performance metrics:
 
 Run with detailed logging:
 ```bash
-opp_run -u Cmdenv -f omnetpp.ini --debug-on-errors=true
+./SmartQueue -u Cmdenv -f omnetpp.ini --debug-on-errors=true
 ```
 
 ## Contributing
