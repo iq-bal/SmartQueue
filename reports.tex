@@ -34,27 +34,57 @@
 \begin{document}
 
 % Cover Page (enhanced)
+% Cover Page (enhanced professional design)
 \begin{titlepage}
     \centering
-    {\Huge \textbf{QoS-AR: Quality-of-Service Adaptive Router}}\par
-    \vspace{0.5em}
-    {\Large SmartQueue Project}\par
-    \vspace{1.5em}
-    \rule{\textwidth}{1pt}\\[0.8em]
-    {\large \textbf{Course Title:} \CourseTitle}\\[0.25em]
-    {\large \textbf{Course Code:} \CourseCode}\\[0.8em]
-    \rule{\textwidth}{1pt}
-    \vspace{2em}
-    \begin{tabular}{p{0.47\textwidth} p{0.47\textwidth}}
-        \multicolumn{1}{c}{\textbf{Submitted By}} & \multicolumn{1}{c}{\textbf{Submitted To}} \\
-        \SubmittedByName & \SubmittedToA \\
-        \SubmittedByID & \SubmittedToATitle \\
-        \SubmittedByAffiliation & \\
-        & \SubmittedToB \\
-        & \SubmittedToBTitle \\
-    \end{tabular}
+    % Optional Logo (comment out if not needed)
+    \vspace*{1cm}
+    \includegraphics[width=0.2\textwidth]{figures/university_logo.png}\par
+    \vspace{1cm}
+
+    % Title block
+    {\Huge \bfseries QoS-AR: Quality-of-Service Adaptive Router \par}
+    \vspace{0.3cm}
+    % {\Large SmartQueue Project\par}
+    \vspace{1cm}
+
+    % Decorative rule
+    \rule{\textwidth}{1pt}\par
+    \vspace{0.5cm}
+    {\Large \textbf{Course Title:} \CourseTitle}\\[0.3em]
+    {\large \textbf{Course Code:} \CourseCode}\par
+    \vspace{0.5cm}
+    \rule{\textwidth}{1pt}\par
+
+    % Submission info box
+    \vspace{2.5cm}
+    \begin{minipage}{0.45\textwidth}
+        \begin{flushleft}
+        \textbf{Submitted By:}\\[0.5em]
+        \SubmittedByName\\
+        ID: \SubmittedByID\\
+        \SubmittedByAffiliation
+        \end{flushleft}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \begin{flushright}
+        \textbf{Submitted To:}\\[0.5em]
+        \SubmittedToA\\
+        \SubmittedToATitle\\[0.5em]
+        \SubmittedToB\\
+        \SubmittedToBTitle
+        \end{flushright}
+    \end{minipage}
+
+    % Footer area
     \vfill
-    {\large OMNeT++ 6.2.0, macOS}
+    \vspace{1cm}
+    \begin{center}
+        {\large \textbf{Computer Networks Laboratory}}\\[0.3em]
+        {\large OMNeT++ 6.2.0 \;|\; macOS}\\[1em]
+        \textit{Department of Computer Science and Engineering, KUET}
+    \end{center}
 \end{titlepage}
 
 % Table of Contents
