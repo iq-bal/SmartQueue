@@ -251,7 +251,8 @@ RFC 4594: Configuration Guidelines for DiffServ Service Classes. IETF, 2006.
 ./SmartQueue -u Cmdenv -f omnetpp.ini -c Mixed
 ./SmartQueue -u Cmdenv -f omnetpp.ini -c Heavy
 ./SmartQueue -u Cmdenv -f omnetpp.ini -c Congestion
-opp_scavetool x results/* -o results/scalars.csv -F CSV-R
+opp_scavetool x results/*.sca -o results/scalars.csv -F CSV-R
+opp_scavetool x results/*.vec -o results/vectors.csv -F CSV-R
 python3 scripts/plot_metrics.py
 \end{verbatim}
 
