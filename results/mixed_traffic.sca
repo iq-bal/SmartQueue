@@ -1,0 +1,636 @@
+version 3
+run Mixed-0-20251029-19:12:34-75194
+attr configname Mixed
+attr datetime 20251029-19:12:34
+attr datetimef 20251029-191234
+attr experiment Mixed
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network ned.AdaptivePriorityNetwork
+attr processid 75194
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config sim-time-limit 30s
+config extends General
+config description "Mixed traffic scenario with varying loads"
+config **.client[0].sendInterval exponential(0.02s)
+config **.client[1].sendInterval exponential(0.015s)
+config **.client[2].sendInterval exponential(0.008s)
+config output-vector-file results/mixed_traffic.vec
+config output-scalar-file results/mixed_traffic.sca
+config network ned.AdaptivePriorityNetwork
+config sim-time-limit 60s
+config seed-set 0
+config num-rngs 3
+config **.router.queueCapacity 200
+config **.router.congestionThreshold 0.7
+config **.router.recoveryThreshold 0.5
+config **.router.checkInterval 0.1s
+config **.client[0].packetType "\"voice\""
+config **.client[0].priorityLevel 3
+config **.client[0].sendInterval exponential(0.03s)
+config **.client[1].packetType "\"video\""
+config **.client[1].priorityLevel 2
+config **.client[1].sendInterval exponential(0.02s)
+config **.client[2].packetType "\"data\""
+config **.client[2].priorityLevel 1
+config **.client[2].sendInterval exponential(0.01s)
+config **.scalar-recording true
+config **.vector-recording true
+config output-vector-file results/adaptive_router.vec
+config output-scalar-file results/adaptive_router.sca
+config cmdenv-express-mode false
+config cmdenv-autoflush true
+config cmdenv-event-banners true
+
+par AdaptivePriorityNetwork.client[0].out.channel typename "\"ned.DelayChannel\""
+par AdaptivePriorityNetwork.client[0].out.channel disabled false
+attr mutable ""
+par AdaptivePriorityNetwork.client[0].out.channel delay 0.00437706s
+attr mutable ""
+attr unit s
+par AdaptivePriorityNetwork.client[1].out.channel typename "\"ned.DelayChannel\""
+par AdaptivePriorityNetwork.client[1].out.channel disabled false
+attr mutable ""
+par AdaptivePriorityNetwork.client[1].out.channel delay 0.00341105s
+attr mutable ""
+attr unit s
+par AdaptivePriorityNetwork.client[2].out.channel typename "\"ned.DelayChannel\""
+par AdaptivePriorityNetwork.client[2].out.channel disabled false
+attr mutable ""
+par AdaptivePriorityNetwork.client[2].out.channel delay 0.00443178s
+attr mutable ""
+attr unit s
+par AdaptivePriorityNetwork.router.out.channel typename "\"ned.DelayChannel\""
+par AdaptivePriorityNetwork.router.out.channel disabled false
+attr mutable ""
+par AdaptivePriorityNetwork.router.out.channel delay 0.00317953s
+attr mutable ""
+attr unit s
+par AdaptivePriorityNetwork.client[0] typename "\"ned.TrafficGenerator\""
+par AdaptivePriorityNetwork.client[0] packetType "\"voice\""
+par AdaptivePriorityNetwork.client[0] priorityLevel 3
+par AdaptivePriorityNetwork.client[0] sendInterval 0.0159175s
+attr unit s
+scalar AdaptivePriorityNetwork.client[0] packetsSent 1828
+scalar AdaptivePriorityNetwork.client[0] packetsSent:count 1828
+attr recordingmode count
+attr source packetSent
+attr title "packets sent, count"
+par AdaptivePriorityNetwork.client[1] typename "\"ned.TrafficGenerator\""
+par AdaptivePriorityNetwork.client[1] packetType "\"video\""
+par AdaptivePriorityNetwork.client[1] priorityLevel 2
+par AdaptivePriorityNetwork.client[1] sendInterval 0.0134784s
+attr unit s
+scalar AdaptivePriorityNetwork.client[1] packetsSent 2211
+scalar AdaptivePriorityNetwork.client[1] packetsSent:count 2211
+attr recordingmode count
+attr source packetSent
+attr title "packets sent, count"
+par AdaptivePriorityNetwork.client[2] typename "\"ned.TrafficGenerator\""
+par AdaptivePriorityNetwork.client[2] packetType "\"data\""
+par AdaptivePriorityNetwork.client[2] priorityLevel 1
+par AdaptivePriorityNetwork.client[2] sendInterval 0.0100474s
+attr unit s
+scalar AdaptivePriorityNetwork.client[2] packetsSent 2906
+scalar AdaptivePriorityNetwork.client[2] packetsSent:count 2906
+attr recordingmode count
+attr source packetSent
+attr title "packets sent, count"
+par AdaptivePriorityNetwork.router typename "\"ned.AdaptiveRouter\""
+par AdaptivePriorityNetwork.router congestionThreshold 0.7
+par AdaptivePriorityNetwork.router recoveryThreshold 0.5
+par AdaptivePriorityNetwork.router queueCapacity 200
+par AdaptivePriorityNetwork.router checkInterval 0.1s
+attr unit s
+scalar AdaptivePriorityNetwork.router packetsReceived 6945
+scalar AdaptivePriorityNetwork.router packetsForwarded 6945
+scalar AdaptivePriorityNetwork.router packetsDropped 0
+scalar AdaptivePriorityNetwork.router lowPriorityDropped 0
+scalar AdaptivePriorityNetwork.router finalQueueLength 0
+statistic AdaptivePriorityNetwork.router processingDelay:histogram
+field count 6945
+field mean 0.0052421873930791
+field stddev 0.00066198212307275
+field min 0.003416094408
+field max 0.011031518564
+field sum 36.406991444934
+field sqrsum 0.1938952735529
+attr recordingmode histogram
+attr source delay
+attr title "processing delay"
+attr unit s
+bin	-inf	0
+bin	0.0034	9
+bin	0.0035	7
+bin	0.0036	18
+bin	0.0037	15
+bin	0.0038	11
+bin	0.0039	13
+bin	0.004	19
+bin	0.0041	19
+bin	0.0042	16
+bin	0.0043	16
+bin	0.0044	1669
+bin	0.0045	44
+bin	0.0046	65
+bin	0.0047	47
+bin	0.0048	45
+bin	0.0049	66
+bin	0.005	50
+bin	0.0051	64
+bin	0.0052	55
+bin	0.0053	1396
+bin	0.0054	2247
+bin	0.0055	64
+bin	0.0056	54
+bin	0.0057	60
+bin	0.0058	71
+bin	0.0059	59
+bin	0.006	85
+bin	0.0061	57
+bin	0.0062	78
+bin	0.0063	165
+bin	0.0064	189
+bin	0.0065	15
+bin	0.0066	15
+bin	0.0067	13
+bin	0.0068	18
+bin	0.0069	17
+bin	0.007	9
+bin	0.0071	15
+bin	0.0072	14
+bin	0.0073	18
+bin	0.0074	9
+bin	0.0075	1
+bin	0.0076	3
+bin	0.0077	5
+bin	0.0078	0
+bin	0.0079	4
+bin	0.008	4
+bin	0.0081	5
+bin	0.0082	2
+bin	0.0083	1
+bin	0.0084	0
+bin	0.0085	0
+bin	0.0086	0
+bin	0.0087	1
+bin	0.0088	0
+bin	0.0089	0
+bin	0.009	0
+bin	0.0091	0
+bin	0.0092	1
+bin	0.0093	0
+bin	0.0094	0
+bin	0.0095	0
+bin	0.0096	0
+bin	0.0097	0
+bin	0.0098	0
+bin	0.0099	0
+bin	0.01	0
+bin	0.0101	0
+bin	0.0102	0
+bin	0.0103	0
+bin	0.0104	0
+bin	0.0105	0
+bin	0.0106	0
+bin	0.0107	0
+bin	0.0108	0
+bin	0.0109	1
+bin	0.011	1
+bin	0.0111	0
+scalar AdaptivePriorityNetwork.router processingDelay:mean 0.0052421873930791
+attr recordingmode mean
+attr source delay
+attr title "processing delay, mean"
+attr unit s
+scalar AdaptivePriorityNetwork.router packetsDropped:count 0
+attr recordingmode count
+attr source packetDropped
+attr title "packets dropped, count"
+scalar AdaptivePriorityNetwork.router queueLength:mean 0.75917926565875
+attr recordingmode mean
+attr source queueLength
+attr title "queue length, mean"
+scalar AdaptivePriorityNetwork.router queueLength:max 5
+attr recordingmode max
+attr source queueLength
+attr title "queue length, max"
+par AdaptivePriorityNetwork.server typename "\"ned.Server\""
+scalar AdaptivePriorityNetwork.server totalPacketsReceived 6943
+scalar AdaptivePriorityNetwork.server averageDelay 0.0084216132674827
+scalar AdaptivePriorityNetwork.server dataPacketsReceived 2904
+scalar AdaptivePriorityNetwork.server dataAverageDelay 0.0087837330768777
+scalar AdaptivePriorityNetwork.server dataMinDelay 0.007614248153
+scalar AdaptivePriorityNetwork.server dataMaxDelay 0.014211051274
+scalar AdaptivePriorityNetwork.server dataThroughput 96.920094826298
+scalar AdaptivePriorityNetwork.server videoPacketsReceived 2211
+scalar AdaptivePriorityNetwork.server videoAverageDelay 0.0077466333798291
+scalar AdaptivePriorityNetwork.server videoMinDelay 0.006595627118
+scalar AdaptivePriorityNetwork.server videoMaxDelay 0.010847165334
+scalar AdaptivePriorityNetwork.server videoThroughput 73.764694301413
+scalar AdaptivePriorityNetwork.server voicePacketsReceived 1828
+scalar AdaptivePriorityNetwork.server voiceAverageDelay 0.0086627427013546
+scalar AdaptivePriorityNetwork.server voiceMinDelay 0.007562736145
+scalar AdaptivePriorityNetwork.server voiceMaxDelay 0.011388642969
+scalar AdaptivePriorityNetwork.server voiceThroughput 61.030612373032
+statistic AdaptivePriorityNetwork.server dataEndToEndDelay:histogram
+field count 2904
+field mean 0.0087837330768777
+field stddev 0.0004941310901762
+field min 0.007614248153
+field max 0.014211051274
+field sum 25.507960855253
+field sqrsum 0.22476393203399
+attr recordingmode histogram
+attr source dataDelay
+attr title "data end-to-end delay"
+attr unit s
+bin	-inf	0
+bin	0.0069	0
+bin	0.007	0
+bin	0.0071	0
+bin	0.0072	0
+bin	0.0073	0
+bin	0.0074	0
+bin	0.0075	0
+bin	0.0076	11
+bin	0.0077	16
+bin	0.0078	14
+bin	0.0079	11
+bin	0.008	22
+bin	0.0081	16
+bin	0.0082	14
+bin	0.0083	18
+bin	0.0084	18
+bin	0.0085	19
+bin	0.0086	2115
+bin	0.0087	34
+bin	0.0088	30
+bin	0.0089	42
+bin	0.009	33
+bin	0.0091	42
+bin	0.0092	44
+bin	0.0093	39
+bin	0.0094	41
+bin	0.0095	44
+bin	0.0096	162
+bin	0.0097	9
+bin	0.0098	9
+bin	0.0099	9
+bin	0.01	12
+bin	0.0101	12
+bin	0.0102	9
+bin	0.0103	10
+bin	0.0104	9
+bin	0.0105	12
+bin	0.0106	8
+bin	0.0107	0
+bin	0.0108	2
+bin	0.0109	3
+bin	0.011	0
+bin	0.0111	3
+bin	0.0112	3
+bin	0.0113	3
+bin	0.0114	1
+bin	0.0115	1
+bin	0.0116	0
+bin	0.0117	0
+bin	0.0118	0
+bin	0.0119	1
+bin	0.012	0
+bin	0.0121	0
+bin	0.0122	0
+bin	0.0123	0
+bin	0.0124	1
+bin	0.0125	0
+bin	0.0126	0
+bin	0.0127	0
+bin	0.0128	0
+bin	0.0129	0
+bin	0.013	0
+bin	0.0131	0
+bin	0.0132	0
+bin	0.0133	0
+bin	0.0134	0
+bin	0.0135	0
+bin	0.0136	0
+bin	0.0137	0
+bin	0.0138	0
+bin	0.0139	0
+bin	0.014	0
+bin	0.0141	1
+bin	0.0142	1
+bin	0.0143	0
+scalar AdaptivePriorityNetwork.server dataEndToEndDelay:mean 0.0087837330768777
+attr recordingmode mean
+attr source dataDelay
+attr title "data end-to-end delay, mean"
+attr unit s
+scalar AdaptivePriorityNetwork.server dataEndToEndDelay:max 0.014211051274
+attr recordingmode max
+attr source dataDelay
+attr title "data end-to-end delay, max"
+attr unit s
+statistic AdaptivePriorityNetwork.server videoEndToEndDelay:histogram
+field count 2211
+field mean 0.0077466333798291
+field stddev 0.00047471484868401
+field min 0.006595627118
+field max 0.010847165334
+field sum 17.127806402802
+field sqrsum 0.13318086955771
+attr recordingmode histogram
+attr source videoDelay
+attr title "video end-to-end delay"
+attr unit s
+bin	-inf	0
+bin	0.00655	1
+bin	0.0066	4
+bin	0.00665	7
+bin	0.0067	2
+bin	0.00675	10
+bin	0.0068	5
+bin	0.00685	9
+bin	0.0069	6
+bin	0.00695	8
+bin	0.007	5
+bin	0.00705	4
+bin	0.0071	9
+bin	0.00715	8
+bin	0.0072	8
+bin	0.00725	12
+bin	0.0073	7
+bin	0.00735	10
+bin	0.0074	5
+bin	0.00745	9
+bin	0.0075	7
+bin	0.00755	1620
+bin	0.0076	12
+bin	0.00765	8
+bin	0.0077	12
+bin	0.00775	13
+bin	0.0078	11
+bin	0.00785	15
+bin	0.0079	9
+bin	0.00795	10
+bin	0.008	12
+bin	0.00805	4
+bin	0.0081	20
+bin	0.00815	18
+bin	0.0082	7
+bin	0.00825	12
+bin	0.0083	11
+bin	0.00835	16
+bin	0.0084	9
+bin	0.00845	13
+bin	0.0085	13
+bin	0.00855	129
+bin	0.0086	4
+bin	0.00865	1
+bin	0.0087	7
+bin	0.00875	4
+bin	0.0088	2
+bin	0.00885	5
+bin	0.0089	3
+bin	0.00895	6
+bin	0.009	3
+bin	0.00905	6
+bin	0.0091	4
+bin	0.00915	8
+bin	0.0092	1
+bin	0.00925	3
+bin	0.0093	3
+bin	0.00935	2
+bin	0.0094	5
+bin	0.00945	4
+bin	0.0095	6
+bin	0.00955	8
+bin	0.0096	1
+bin	0.00965	1
+bin	0.0097	1
+bin	0.00975	2
+bin	0.0098	0
+bin	0.00985	0
+bin	0.0099	1
+bin	0.00995	1
+bin	0.01	3
+bin	0.01005	1
+bin	0.0101	0
+bin	0.01015	0
+bin	0.0102	0
+bin	0.01025	0
+bin	0.0103	0
+bin	0.01035	0
+bin	0.0104	3
+bin	0.01045	0
+bin	0.0105	1
+bin	0.01055	0
+bin	0.0106	0
+bin	0.01065	0
+bin	0.0107	0
+bin	0.01075	0
+bin	0.0108	1
+bin	0.01085	0
+scalar AdaptivePriorityNetwork.server videoEndToEndDelay:mean 0.0077466333798291
+attr recordingmode mean
+attr source videoDelay
+attr title "video end-to-end delay, mean"
+attr unit s
+scalar AdaptivePriorityNetwork.server videoEndToEndDelay:max 0.010847165334
+attr recordingmode max
+attr source videoDelay
+attr title "video end-to-end delay, max"
+attr unit s
+statistic AdaptivePriorityNetwork.server voiceEndToEndDelay:histogram
+field count 1828
+field mean 0.0086627427013546
+field stddev 0.00043227676316022
+field min 0.007562736145
+field max 0.011388642969
+field sum 15.835493658076
+field sqrsum 0.13752020617519
+attr recordingmode histogram
+attr source voiceDelay
+attr title "voice end-to-end delay"
+attr unit s
+bin	-inf	0
+bin	0.0067	0
+bin	0.0068	0
+bin	0.0069	0
+bin	0.007	0
+bin	0.0071	0
+bin	0.0072	0
+bin	0.0073	0
+bin	0.0074	0
+bin	0.0075	9
+bin	0.0076	24
+bin	0.0077	11
+bin	0.0078	18
+bin	0.0079	14
+bin	0.008	11
+bin	0.0081	16
+bin	0.0082	18
+bin	0.0083	14
+bin	0.0084	15
+bin	0.0085	1347
+bin	0.0086	14
+bin	0.0087	20
+bin	0.0088	18
+bin	0.0089	15
+bin	0.009	19
+bin	0.0091	22
+bin	0.0092	25
+bin	0.0093	14
+bin	0.0094	23
+bin	0.0095	119
+bin	0.0096	7
+bin	0.0097	4
+bin	0.0098	3
+bin	0.0099	2
+bin	0.01	3
+bin	0.0101	3
+bin	0.0102	2
+bin	0.0103	4
+bin	0.0104	2
+bin	0.0105	5
+bin	0.0106	0
+bin	0.0107	0
+bin	0.0108	1
+bin	0.0109	1
+bin	0.011	1
+bin	0.0111	0
+bin	0.0112	3
+bin	0.0113	1
+bin	0.0114	0
+bin	0.0115	0
+bin	0.0116	0
+bin	0.0117	0
+bin	0.0118	0
+bin	0.0119	0
+bin	0.012	0
+bin	0.0121	0
+bin	0.0122	0
+scalar AdaptivePriorityNetwork.server voiceEndToEndDelay:mean 0.0086627427013546
+attr recordingmode mean
+attr source voiceDelay
+attr title "voice end-to-end delay, mean"
+attr unit s
+scalar AdaptivePriorityNetwork.server voiceEndToEndDelay:max 0.011388642969
+attr recordingmode max
+attr source voiceDelay
+attr title "voice end-to-end delay, max"
+attr unit s
+scalar AdaptivePriorityNetwork.server packetsReceived:count 6943
+attr recordingmode count
+attr source packetReceived
+attr title "packets received, count"
+statistic AdaptivePriorityNetwork.server endToEndDelay:histogram
+field count 6943
+field mean 0.0084216132674827
+field stddev 0.00066204038749131
+field min 0.006595627118
+field max 0.014211051274
+field sum 58.471260916133
+field sqrsum 0.4954650077669
+attr recordingmode histogram
+attr source delay
+attr title "end-to-end delay"
+attr unit s
+bin	-inf	0
+bin	0.00655	5
+bin	0.00665	9
+bin	0.00675	15
+bin	0.00685	15
+bin	0.00695	13
+bin	0.00705	13
+bin	0.00715	16
+bin	0.00725	19
+bin	0.00735	15
+bin	0.00745	16
+bin	0.00755	1655
+bin	0.00765	53
+bin	0.00775	62
+bin	0.00785	44
+bin	0.00795	53
+bin	0.00805	54
+bin	0.00815	60
+bin	0.00825	56
+bin	0.00835	56
+bin	0.00845	64
+bin	0.00855	3577
+bin	0.00865	60
+bin	0.00875	57
+bin	0.00885	59
+bin	0.00895	75
+bin	0.00905	58
+bin	0.00915	78
+bin	0.00925	62
+bin	0.00935	80
+bin	0.00945	69
+bin	0.00955	298
+bin	0.00965	13
+bin	0.00975	17
+bin	0.00985	13
+bin	0.00995	18
+bin	0.01005	17
+bin	0.01015	12
+bin	0.01025	11
+bin	0.01035	15
+bin	0.01045	17
+bin	0.01055	14
+bin	0.01065	2
+bin	0.01075	3
+bin	0.01085	5
+bin	0.01095	0
+bin	0.01105	3
+bin	0.01115	2
+bin	0.01125	6
+bin	0.01135	4
+bin	0.01145	1
+bin	0.01155	0
+bin	0.01165	0
+bin	0.01175	0
+bin	0.01185	0
+bin	0.01195	1
+bin	0.01205	0
+bin	0.01215	0
+bin	0.01225	0
+bin	0.01235	0
+bin	0.01245	1
+bin	0.01255	0
+bin	0.01265	0
+bin	0.01275	0
+bin	0.01285	0
+bin	0.01295	0
+bin	0.01305	0
+bin	0.01315	0
+bin	0.01325	0
+bin	0.01335	0
+bin	0.01345	0
+bin	0.01355	0
+bin	0.01365	0
+bin	0.01375	0
+bin	0.01385	0
+bin	0.01395	0
+bin	0.01405	1
+bin	0.01415	1
+bin	0.01425	0
+scalar AdaptivePriorityNetwork.server endToEndDelay:mean 0.0084216132674827
+attr recordingmode mean
+attr source delay
+attr title "end-to-end delay, mean"
+attr unit s
+scalar AdaptivePriorityNetwork.server endToEndDelay:max 0.014211051274
+attr recordingmode max
+attr source delay
+attr title "end-to-end delay, max"
+attr unit s
+par AdaptivePriorityNetwork typename "\"ned.AdaptivePriorityNetwork\""
+
