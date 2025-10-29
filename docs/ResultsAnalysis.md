@@ -51,11 +51,11 @@ Contains detailed execution information:
 
 #### Mode Switching Frequency
 ```
-Metric: router.modeChanges:count
-Analysis: 
-- Low values: Stable traffic, minimal congestion
-- High values: Frequent congestion, active adaptation
-- Optimal: Moderate switching indicating responsive adaptation
+Metric: routerMode (vector)
+How to analyze:
+- Export `routerMode` and count transitions between 0 (NORMAL) and 1 (CONGESTED)
+- Few transitions indicate stable traffic; frequent transitions indicate active adaptation
+Tip: Use a small script to count changes in the `routerMode` vector
 ```
 
 #### Congestion Response Time
@@ -70,10 +70,10 @@ Analysis:
 
 #### End-to-End Delay by Priority
 ```
-Metrics: 
-- server.voiceDelay:mean (High priority)
-- server.videoDelay:mean (Medium priority)  
-- server.dataDelay:mean (Low priority)
+Metrics (scalars):
+- server.voiceAverageDelay (High priority)
+- server.videoAverageDelay (Medium priority)
+- server.dataAverageDelay (Low priority)
 
 Expected Behavior:
 - Voice < Video < Data delays
@@ -83,8 +83,9 @@ Expected Behavior:
 
 #### Packet Loss by Priority
 ```
-Metrics:
-- router.droppedPackets:count (by priority level)
+Metrics (scalars):
+- router.packetsDropped (total)
+- router.lowPriorityDropped (low priority)
 
 Analysis:
 - Low-priority packets should be dropped first
@@ -96,19 +97,22 @@ Analysis:
 
 #### Overall System Throughput
 ```
-Metric: server.throughput:mean
+Metric: Derived from per-type throughput
+Use:
+- server.voiceThroughput
+- server.videoThroughput
+- server.dataThroughput
 Analysis:
-- Should remain stable under normal conditions
-- May decrease during heavy congestion
-- Recovery should be rapid after congestion subsides
+- High-priority traffic should maintain throughput under congestion
+- Overall throughput may decrease when congestion is severe
 ```
 
 #### Per-Traffic-Type Throughput
 ```
-Metrics:
-- Voice traffic throughput
-- Video traffic throughput
-- Data traffic throughput
+Metrics (scalars):
+- server.voiceThroughput
+- server.videoThroughput
+- server.dataThroughput
 
 Expected Patterns:
 - High-priority traffic maintains throughput under congestion
@@ -127,10 +131,10 @@ Expected Patterns:
 
 **Key Metrics to Check:**
 ```
-router.queueLength:mean < 5
-router.modeChanges:count = 0
-server.*Delay:mean < 0.1s
-router.droppedPackets:count = 0
+router.queueLength:mean ~ 0–3
+routerMode:vector transitions ≈ 0
+server.*AverageDelay < 0.05s
+router.packetsDropped = 0
 ```
 
 ### Heavy Traffic Scenario
@@ -143,11 +147,15 @@ router.droppedPackets:count = 0
 
 **Key Metrics to Check:**
 ```
-router.queueLength:mean > 20
-router.modeChanges:count > 10
-server.voiceDelay:mean < server.dataDelay:mean
-router.droppedPackets:count > 0
+router.queueLength:mean typically < 10
+routerMode:vector transitions = small (or 0)
+server.voiceAverageDelay < server.dataAverageDelay
+router.packetsDropped = 0 (at current heavy settings)
 ```
+
+To stress-test congestion:
+- Decrease `**.router.queueCapacity` (e.g., to 50)
+- Decrease `sendInterval` values further (e.g., `client[0]=0.005s`, `client[1]=0.004s`, `client[2]=0.003s`)
 
 ### Congestion Scenario
 **Expected Results:**

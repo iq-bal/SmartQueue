@@ -35,7 +35,7 @@ SmartQueue/
 
 ## Prerequisites
 
-- OMNeT++ 6.0 or later
+- OMNeT++ 6.2 or later
 - Access to `opp_env` shell environment
 - Basic knowledge of OMNeT++ simulation framework
 
@@ -54,6 +54,11 @@ opp_env
 Navigate to the project directory and build:
 ```bash
 cd /path/to/SmartQueue
+make
+```
+
+If you have significantly changed the project structure (e.g., added new source directories), regenerate the Makefile:
+```bash
 opp_makemake -f --deep -I./src -I./ned
 make
 ```
@@ -67,11 +72,17 @@ make
 
 #### Run Individual Scenarios
 ```bash
-# Run specific configuration
+# Using OMNeT++ runner
 opp_run -u Cmdenv -f omnetpp.ini -c Light
 opp_run -u Cmdenv -f omnetpp.ini -c Heavy
 opp_run -u Cmdenv -f omnetpp.ini -c Mixed
 opp_run -u Cmdenv -f omnetpp.ini -c Congestion
+
+# Or using the built binary
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Light
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Heavy
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Mixed
+./SmartQueue -u Cmdenv -f omnetpp.ini -c Congestion
 ```
 
 #### Run with GUI (if available)
@@ -94,15 +105,15 @@ The project includes several predefined traffic scenarios:
 Key parameters in `omnetpp.ini`:
 
 ### Router Configuration
-- `queueCapacity`: Maximum packets per priority queue (default: 50)
-- `congestionThreshold`: Queue length triggering strict mode (default: 30)
-- `recoveryThreshold`: Queue length for returning to normal mode (default: 15)
+- `queueCapacity`: Maximum total packets across all priorities (default: 200)
+- `congestionThreshold`: Utilization fraction to enter strict mode (default: 0.7)
+- `recoveryThreshold`: Utilization fraction to return to normal mode (default: 0.5)
 - `checkInterval`: Congestion monitoring frequency (default: 0.1s)
 
 ### Traffic Generation
 - `sendInterval`: Packet generation rate per traffic type
-- `priorityLevel`: Packet priority (0=High, 1=Medium, 2=Low)
-- `packetType`: Traffic type identifier
+- `priorityLevel`: Packet priority (1=Low, 2=Medium, 3=High)
+- `packetType`: Traffic type identifier (`"voice"`, `"video"`, `"data"`)
 
 ## Results Analysis
 

@@ -33,8 +33,8 @@ The network consists of:
 
 **Parameters**:
 - `sendInterval`: Base packet generation interval
-- `priorityLevel`: Packet priority (0=High, 1=Medium, 2=Low)
-- `packetType`: Traffic type identifier
+- `priorityLevel`: Packet priority (1=Low, 2=Medium, 3=High)
+- `packetType`: Traffic type identifier (`"voice"`, `"video"`, `"data"`)
 
 **Design Decisions**:
 - Uses exponential distribution to model realistic traffic patterns
@@ -60,9 +60,9 @@ The network consists of:
 - **Statistics Collection**: Comprehensive metrics for analysis
 
 **Parameters**:
-- `queueCapacity`: Maximum packets per priority queue (50)
-- `congestionThreshold`: Trigger for strict mode (30 packets)
-- `recoveryThreshold`: Return to normal mode (15 packets)
+- `queueCapacity`: Maximum total packets across all priorities (200)
+- `congestionThreshold`: Utilization fraction to enter strict mode (0.7)
+- `recoveryThreshold`: Utilization fraction to return to normal mode (0.5)
 - `checkInterval`: Monitoring frequency (0.1 seconds)
 
 **Design Decisions**:
@@ -91,10 +91,10 @@ The network consists of:
 #### Packet Message (`src/messages/Packet.msg`)
 
 ```cpp
-packet Packet {
-    int priorityLevel;    // 0=High, 1=Medium, 2=Low
-    int type;            // Traffic type identifier
-    simtime_t timestamp; // Creation time for delay calculation
+message Packet {
+    int priorityLevel;    // 3=high, 2=medium, 1=low
+    string type;          // "voice", "video", "data"
+    simtime_t timestamp;  // creation time for end-to-end delay
 }
 ```
 
@@ -111,11 +111,12 @@ packet Packet {
 The router continuously monitors queue occupancy:
 
 ```cpp
-int totalQueueLength = highQueue.size() + mediumQueue.size() + lowQueue.size();
+int currentQueueLength = priorityQueue.getLength();
+double utilization = (double)currentQueueLength / queueCapacity;
 
-if (currentMode == NORMAL && totalQueueLength >= congestionThreshold) {
+if (currentMode == NORMAL_MODE && utilization > congestionThreshold) {
     switchToStrictMode();
-} else if (currentMode == STRICT && totalQueueLength <= recoveryThreshold) {
+} else if (currentMode == CONGESTED_MODE && utilization < recoveryThreshold) {
     switchToNormalMode();
 }
 ```
@@ -137,8 +138,16 @@ if (currentMode == NORMAL && totalQueueLength >= congestionThreshold) {
 
 #### Enqueuing Logic
 ```cpp
-if (queue.size() < queueCapacity) {
-    queue.push(packet);
+if (priorityQueue.getLength() < queueCapacity) {
+    // In strict mode and near congestion, deprioritize low priority
+    if (currentMode == CONGESTED_MODE &&
+        priorityQueue.getLength() > congestionThreshold * queueCapacity &&
+        packet->getPriorityLevel() == 1) {
+        // Drop low priority proactively
+        dropLowPriority(packet);
+    } else {
+        priorityQueue.enqueue(packet);
+    }
 } else {
     // Queue full - drop packet and record statistics
     dropPacket(packet);
@@ -183,29 +192,37 @@ The `omnetpp.ini` file defines multiple scenarios:
 ### Parameter Hierarchy
 ```ini
 # Global defaults
-*.router.queueCapacity = 50
+**.router.queueCapacity = 200
+**.router.congestionThreshold = 0.7
+**.router.recoveryThreshold = 0.5
+**.router.checkInterval = 0.1s
 
-# Scenario-specific overrides
+# Scenario-specific overrides (examples)
+[Config Light]
+**.client[0].sendInterval = exponential(0.1s)
+**.client[1].sendInterval = exponential(0.08s)
+**.client[2].sendInterval = exponential(0.05s)
+
 [Config Heavy]
-*.client*.sendInterval = exponential(0.05s)  # Higher rate
-
-[Config Light]  
-*.client*.sendInterval = exponential(0.5s)   # Lower rate
+**.client[1].sendInterval = exponential(0.008s)
+**.client[2].sendInterval = exponential(0.005s)
 ```
 
 ## Statistics and Monitoring
 
 ### Router Statistics
-- `queueLength`: Real-time queue occupancy
-- `droppedPackets`: Packets dropped by priority
-- `modeChanges`: Frequency of mode switching
-- `processingDelay`: Time spent processing packets
+- `queueLength`: Real-time queue occupancy (vector `queueLength`)
+- `packetsDropped`: Total packets dropped (scalar)
+- `lowPriorityDropped`: Low priority drops (scalar)
+- `routerMode`: Mode over time (vector; 0=NORMAL, 1=CONGESTED)
+- `delay`: Per-packet delay recorded at router forwarding (vector)
 
 ### Traffic Statistics
-- `packetsSent`: Generation rate by traffic type
-- `packetsReceived`: Reception rate at server
-- `endToEndDelay`: Latency measurements
-- `throughput`: Data rate calculations
+- `packetsSent`: Generation count per client (scalar)
+- `totalPacketsReceived`: Reception count at server (scalar)
+- `<type>AverageDelay`: End-to-end delay per traffic type (scalar)
+- `<type>MinDelay` / `<type>MaxDelay`: Delay extremes (scalar)
+- `<type>Throughput`: Packets per second per traffic type (scalar)
 
 ### System Statistics
 - `networkUtilization`: Overall system load
