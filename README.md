@@ -130,7 +130,8 @@ opp_scavetool export -F CSV-S -T v -o results/vectors.csv results/*.vec
 opp_scavetool export -F CSV-S -T v -o results/queueLength.csv -f "name=~queueLength" results/*.vec
 
 # Only per-type average delays from server (scalars)
-opp_scavetool export -F CSV-S -T s -o results/delays_avg.csv -f 'name(~*AverageDelay) && module=~**.server' results/*.sca
+opp_scavetool export -F CSV-S -T s -o results/delays_avg.csv -f "name=~averageDelay AND module=~.*server" results/*.sca
+
 
 # If 'opp_scavetool' is unavailable, use the full path or add to PATH:
 # $OMNETPP_ROOT/bin/scavetool export -F CSV-S -T s -o results/scalars.csv results/*.sca
